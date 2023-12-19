@@ -1,12 +1,22 @@
 <?php
 
+use App\Http\Controllers\Koperasi\KoperasiController;
+use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\WebhookController;
+use App\Http\Requests\Authenticate\UserRegisterRequest;
+use App\Mail\VerifyEmailUserMail;
+use App\Models\Koperasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use OpenAPI\Client\Api\ChannelApi;
 use OpenAPI\Client\Configuration;
+use App\Models\User;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,81 +36,41 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 
 Route::post('/webhook', [WebhookController::class , 'webhook'])->name('webhook');
 
-Route::post('/send', function() {
-//https://sandbox.1msg.io/FRO948034957/sendTemplate
+Route::prefix('koperasi')->group(function() {
+    Route::post('/webhook', [WebhookController::class , 'koperasiWebhook'])->name('webhook.koperasi');
 
-$token = 'link_Gdy9VT6nlr4iTzFHLd9wc3ihuTS6lPIQ';
-$channel = 'https://sandbox.1msg.io/FRO948034957/';
+    Route::post('/test' , function(UserRegisterRequest $request){
+        $validatedData = $request->validated();
 
-$config = Configuration::getDefaultConfiguration()->setApiKey('token', $token)->setHost($channel);
+        $validatedData['password'] = Hash::make($validatedData['nik'] . rand(123,999));
 
-$apiInstance = new ChannelApi(
-    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
-    // This is optional, `GuzzleHttp\Client` will be used as default.
-        new GuzzleHttp\Client(),
-        $config
-    );
+        $user = User::create($validatedData);
+
+        //buat token dan endpoint
+        $token = Str::uuid();
+
+        // cache here
+        Cache::remember('verify-email' . $validatedData['email'] , now()->addHour(1) , function() {
+            return null;
+        });
+
+        Cache::put('verify-email' . $validatedData['email'] , $token, now()->addHour(1));
+
+        $data = [
+            'url' => 'http://api-koperasi.test/api/v1/auth/email/verify?email=' . str_replace( '@' ,'%40' , $validatedData['email']) . '&token=' . $token,
+            'name' => $validatedData['name']
+        ];
+
+        Mail::to($validatedData['email'])->send(new VerifyEmailUserMail($data));
+
+        return $user;
+    });
+
+
     
-    try {
-        $result = $apiInstance->getMe();
-        Log::debug($result);
-        return 'ok';
-    } catch (Exception $e) {
-        echo 'Exception when calling ChannelApi->getMe: ', $e->getMessage(), PHP_EOL;
-    }
 });
 
 
-Route::post('/sent', function() {
-    //https://sandbox.1msg.io/FRO948034957/sendTemplate
-    
-   try {
-    $token = 'link_Gdy9VT6nlr4iTzFHLd9wc3ihuTS6lPIQ';
-    $channel = 'https://sandbox.1msg.io/FRO948034957/';
-    
-    $data = [
-        "token" => $token,
-        'phone' => '6287762582176',
-        "body" => "Please choose option",
-        "action" => "List",
-        "header" => 'Ini adalah pesan header',
-        "footer" => 'Ya ini footer',
-        "sections" => [
-            [
-                "title" => "Simpan Data",
-                "rows" => [
-                    [
-                        "id" => "1",
-                        "title" => "Registrasikan Member",
-                        "description" => "Registrasikan member koperasi mu"
-                    ]
-                ]
-            ],
-            [
-                "title" => "Dapatkan Data",
-                "rows" => [
-                    [
-                        "id" => "2",
-                        "title" => "Cek Saldo",
-                        "description" => "Dapatkan jumlah saldo saat ini"
-                    ],
-                    [
-                        "id" => "3",
-                        "title" => "Cek Transaksi Terakhir",
-                        "description" => "Dapatkan informasi traksaksi terakhir"
-                    ]
-                ]
-            ]
-        ]
-    ];
-
-    $result = Http::post($channel . 'sendList' , $data);
-   
-    return 'Ok';
-   } catch (\Exception $e) {
-        return $e;
-        Log::debug($e->getMessage());
-   }
-    
-   
-    });
+Route::prefix('auth')->group(function() {
+    Route::get('/email/verify' , [UserController::class , 'verifyEmail'])->name('verify.nasabah.email');
+});

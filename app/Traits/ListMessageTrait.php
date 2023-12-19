@@ -7,7 +7,7 @@ trait ListMessageTrait
     public function listMessage()
     {
         $data = [
-            "token" => env('TOKEN_WA'),
+            //"token" => env('TOKEN_WA'),
             'phone' => env('TEST_PHONE'),
             "body" => "Please choose option",
             "action" => "List",
@@ -41,12 +41,25 @@ trait ListMessageTrait
     public function message(string $data)
     {
         $data = [
-            "token" => env('TOKEN_WA'),
+            //"token" => env('TOKEN_WA'),
             'phone' => env('TEST_PHONE'),
             "body" => $data
         ];
 
         return $data;
+    }
+
+
+
+    public function registerNasabahForm()
+    {
+        $message = "Anda belum terdaftar silahkan lengkapi form berikut dan kirim kembali.\n\n"
+                    . "Nik: \n"
+                    . "Nama: \n"
+                    . "Email: \n\n"
+                    . "Terimakasih,\n"
+                    . "Koperasi Hub";
+        return $message;
     }
 }
 

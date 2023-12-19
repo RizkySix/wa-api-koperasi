@@ -9,4 +9,10 @@ interface KoperasiServiceInterface
     public function sendList();
 
     public function sendMessage(string $msg);
+
+    public function findKoperasiByBotPhone(string $botPhone);
+
+    public function sendRegisterForm(string $receiverPhone);
+
+    public function sendNotifVerifyEmailSend(string $receiverPhone);
 }

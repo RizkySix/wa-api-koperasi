@@ -20,4 +20,6 @@ class KoperasiRepository implements KoperasiRepositoryInterface
     {
         $this->model::factory()->create(['phone' => env('TEST_PHONE')]);
     }
+
+
 }

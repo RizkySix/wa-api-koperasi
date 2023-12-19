@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Contract\Services\KoperasiServiceInterface;
+use App\Contract\Services\UserServiceInterface;
 use App\Services\KoperasiService;
+use App\Services\UserService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -14,6 +16,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(KoperasiServiceInterface::class , KoperasiService::class);
+        $this->app->bind(UserServiceInterface::class , UserService::class);
     }
 
     /**

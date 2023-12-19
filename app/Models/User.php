@@ -12,25 +12,13 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+    protected $guarded = [];
+    protected $primaryKey = 'nik';
+    protected $keyType = 'string';
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
+
     protected $hidden = [
         'password',
-        'remember_token',
     ];
 
     /**
@@ -42,4 +30,17 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+
+
+     /**
+     * Relation many to many
+     */
+    public function koperasies()
+    {
+        return $this->belongsToMany(Koperasi::class , 'koperasi_user' , 'user_nik' , 'koperasi_id')
+                ->withPivot('verified')
+                ->withPivot('verified_at');
+    }
+
 }
