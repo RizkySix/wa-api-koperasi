@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Contract\Repositories\KoperasiRepositoryInterface;
 use App\Contract\Services\KoperasiServiceInterface;
+use App\Contract\Services\User as ServicesUser;
+use App\Contract\Services\WhatsappBotServiceInterface;
 use App\Helper\AuthorizationWaApi;
 use App\Models\User;
 use App\Models\WhatsappBot;
@@ -17,10 +19,12 @@ class KoperasiService implements KoperasiServiceInterface
 {
     use ListMessageTrait;
     protected $repository;
+    protected $whatsappBotServiceInterface;
 
-    public function __construct(KoperasiRepositoryInterface $koperasiRepositoryInterface)
+    public function __construct(KoperasiRepositoryInterface $koperasiRepositoryInterface, WhatsappBotServiceInterface $whatsappBotServiceInterface)
     {
         $this->repository = $koperasiRepositoryInterface;
+        $this->whatsappBotServiceInterface = $whatsappBotServiceInterface;
     }
 
     /**
@@ -79,24 +83,56 @@ class KoperasiService implements KoperasiServiceInterface
         }
     }
 
+    //------------------------------------------------------------------------------------------------------------------------
+
     /**
-     * Get koperasi by bot phone
+     * Attach user to koperasi
      */
-    public function findKoperasiByBotPhone(string $botPhone)
+    public function attachUserWithKoperasi(string $botPhone, User $user)
     {
-        $bot = WhatsappBot::with(['koperasi'])->where('wa_phone', $botPhone)->first();
-
-        return $bot;
-
+        try {
+            $bot = $this->whatsappBotServiceInterface->findBotByBotPhone($botPhone);
+            Log::debug($bot);
+         
+            return $this->repository->attachUserWithKoperasi($bot, $user);
+        } catch (Exception $e) {
+            $e->getMessage();
+        }
     }
+
+    /**
+     * Find koperasi by name
+     */
+    public function findKoperasiByBame(string $name)
+    {
+        try {
+            return $this->repository->findKoperasiByBame($name);
+        } catch (Exception $e) {
+            $e->getMessage();
+        }
+    }
+
+    /**
+     * Find koperasi by phone
+     */
+    public function findKoperasiByPhone(string $phone)
+    {
+        try {
+            return $this->repository->findKoperasiByPhone($phone);
+        } catch (Exception $e) {
+            $e->getMessage();
+        }
+    }
+
 
     /**
      * Kirim form registrasi form ke nasabah
      */
-    public function sendRegisterForm(string $receiverPhone)
+    public function sendRegisterForm(string $botPhone, string $receiverPhone)
     {
         try {
-            $response = AuthorizationWaApi::seeBotSendMessage('a9005e05-110a-4828-812c-aa636d6f3197' , $receiverPhone , $this->registerNasabahForm());
+            $getBot = $this->whatsappBotServiceInterface->findBotByBotPhone($botPhone);
+            $response = AuthorizationWaApi::seeBotSendMessage($getBot->app_key , $receiverPhone , $this->registerNasabahForm());
 
             Log::debug($response);
         } catch (Exception $e) {
@@ -106,10 +142,11 @@ class KoperasiService implements KoperasiServiceInterface
         
     }
 
-    public function sendNotifVerifyEmailSend(string $receiverPhone)
+    public function sendNotifVerifyEmailSend(string $botPhone, string $receiverPhone)
     {
         try {
-            $response = AuthorizationWaApi::seeBotSendMessage('a9005e05-110a-4828-812c-aa636d6f3197' , $receiverPhone , 'Kami sudah mengirim email verifikasi ke email kamu');
+            $getBot = $this->whatsappBotServiceInterface->findBotByBotPhone($botPhone);
+            $response = AuthorizationWaApi::seeBotSendMessage($getBot->app_key , $receiverPhone , 'Kami sudah mengirim email verifikasi ke email kamu');
 
             Log::debug($response);
         } catch (Exception $e) {

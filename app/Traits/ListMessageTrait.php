@@ -53,10 +53,9 @@ trait ListMessageTrait
 
     public function registerNasabahForm()
     {
-        $message = "Anda belum terdaftar silahkan lengkapi form berikut dan kirim kembali.\n\n"
-                    . "Nik: \n"
-                    . "Nama: \n"
-                    . "Email: \n\n"
+        $message = "Anda belum terdaftar, silahkan kirim pesan dengan mengikut format berikut.\n"
+                    . "#nik#email#nama \n"
+                    . "Pastikan data yang kamu kirim adalah data yang valid dan benar!. \n\n"
                     . "Terimakasih,\n"
                     . "Koperasi Hub";
         return $message;

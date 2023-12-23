@@ -37,7 +37,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 Route::post('/webhook', [WebhookController::class , 'webhook'])->name('webhook');
 
 Route::prefix('koperasi')->group(function() {
-    Route::post('/webhook', [WebhookController::class , 'koperasiWebhook'])->name('webhook.koperasi');
+    Route::post('/webhook', [WebhookController::class , 'koperasiWebhook'])->middleware(['check.regis' , 'check.email' , 'registered.user.koperasi'])->name('webhook.koperasi');
 
     Route::post('/test' , function(UserRegisterRequest $request){
         $validatedData = $request->validated();

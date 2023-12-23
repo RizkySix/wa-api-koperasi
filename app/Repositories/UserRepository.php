@@ -15,7 +15,7 @@ class UserRepository implements UserRepositoryInterface
     public function userRegister(array $data)
     {
         $user = $this->model::create($data);
-
+        
         return $user;
     }
 
@@ -29,5 +29,13 @@ class UserRepository implements UserRepositoryInterface
         ]);
 
         return $user;
+    }
+
+    /**
+     * find user by their phone
+     */
+    public function findUserByPhone(string $phone)
+    {
+        return $this->model::where('phone' , $phone)->first();
     }
 }

@@ -14,6 +14,7 @@ class User extends Authenticatable
 
     protected $guarded = [];
     protected $primaryKey = 'nik';
+    public $incrementing = false;
     protected $keyType = 'string';
 
 

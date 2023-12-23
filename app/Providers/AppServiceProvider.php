@@ -4,8 +4,10 @@ namespace App\Providers;
 
 use App\Contract\Services\KoperasiServiceInterface;
 use App\Contract\Services\UserServiceInterface;
+use App\Contract\Services\WhatsappBotServiceInterface;
 use App\Services\KoperasiService;
 use App\Services\UserService;
+use App\Services\WhatsappBotService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -17,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(KoperasiServiceInterface::class , KoperasiService::class);
         $this->app->bind(UserServiceInterface::class , UserService::class);
+        $this->app->bind(WhatsappBotServiceInterface::class , WhatsappBotService::class);
     }
 
     /**

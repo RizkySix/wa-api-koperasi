@@ -2,6 +2,8 @@
 
 namespace App\Contract\Services;
 
+use App\Models\User;
+
 interface KoperasiServiceInterface
 {
     public function optionRequest(array $request);
@@ -10,9 +12,14 @@ interface KoperasiServiceInterface
 
     public function sendMessage(string $msg);
 
-    public function findKoperasiByBotPhone(string $botPhone);
+    // -------------------------------------------------------------
+    public function attachUserWithKoperasi(string $botPhone, User $user);
 
-    public function sendRegisterForm(string $receiverPhone);
+    public function findKoperasiByBame(string $name);
 
-    public function sendNotifVerifyEmailSend(string $receiverPhone);
+    public function findKoperasiByPhone(string $phone);
+
+    public function sendRegisterForm(string $botPhone, string $receiverPhone);
+
+    public function sendNotifVerifyEmailSend(string $botPhone, string $receiverPhone);
 }

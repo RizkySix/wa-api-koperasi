@@ -22,7 +22,8 @@ class DatabaseSeeder extends Seeder
          ]);
 
          $myKoperasi->bot()->create([
-            'wa_phone' => '6285792718157'
+            'wa_phone' => '6285792718157',
+            'app_key' => 'acaceea1-7480-4620-8284-d5cfb120d6df'
          ]);
 
           $koperasies = Koperasi::factory(5)->create()
@@ -38,7 +39,7 @@ class DatabaseSeeder extends Seeder
             $koperasi = $koperasies->random();
     
            
-            $user->koperasies()->attach($koperasi);
+            $user->koperasies()->attach($koperasi, ['user_nik' => $user->nik]);
         });
 
           
