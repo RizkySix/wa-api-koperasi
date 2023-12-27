@@ -16,6 +16,7 @@ use App\Models\Koperasi;
 use App\Models\User;
 use App\Traits\AuthenticationTrait;
 use App\Traits\ListMessageTrait;
+use App\Traits\RegexFormatTrait;
 use Exception;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
@@ -25,7 +26,7 @@ use Illuminate\Support\Str;
 
 class UserService implements UserServiceInterface
 {
-    use ListMessageTrait, AuthenticationTrait;
+    use ListMessageTrait, AuthenticationTrait, RegexFormatTrait;
     protected $repository;
     protected $koperasiServiceInterface;
     protected $whatsappBotServiceInterface;
@@ -196,7 +197,18 @@ class UserService implements UserServiceInterface
             ]);
 
             Log::debug($ipaymuTransactions);
-            return $ipaymuTransactions['Data']['Transaction'];
+            $transactions =  $ipaymuTransactions['Data']['Transaction'];
+
+            $data = [];
+            if(count($transactions) != 0){
+                for($i = 1; $i <= count($transactions); $i++){
+                    $data['d' . $i] = $transactions[$i-1];
+                }
+            }
+           
+            $this->cacheHistoryTransaction($data , $user);
+
+            return $transactions;
         } catch (Exception $e) {
             Log::debug($e->getMessage());
         }

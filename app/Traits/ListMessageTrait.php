@@ -2,6 +2,8 @@
 
 namespace App\Traits;
 
+use Carbon\Carbon;
+
 trait ListMessageTrait
 {
     public function listMessage()
@@ -70,6 +72,30 @@ trait ListMessageTrait
                  ;
 
         return $option;
+    }
+
+    public function setMessageHistoryTransaction(array $data)
+    {
+        $message = "Berikut adalah riwayat transaksi anda:\n\n";
+
+        foreach($data as $key => $value){
+            $message .= "-Transaksi sebesar Rp " . $value['Amount'] + $value['Fee'] . ", channel pembayaran " . $value['PaymentChannel'] . "\n"
+            . 'Untuk melihat lebih detail ketik "' . $key .  '"' . "\n\n";
+        }
+
+        return $message;
+    }
+
+
+    public function setDetailMessageTransaction(array $data)
+    {
+        $message = "Berikut adalah detail transaksi anda:\n\n"
+                   . "-Transaksi sebesar Rp " . $data['Amount'] + $data['Fee'] . ", channel pembayaran " . $data['PaymentChannel'] . "\n"
+                   . "Dibuat pada tanggal " . Carbon::parse($data['CreatedDate'])->format('d-M-Y H:i:s');
+        
+        return $message;
+                   
+        
     }
 }
 

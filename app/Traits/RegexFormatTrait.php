@@ -2,7 +2,9 @@
 
 namespace App\Traits;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
@@ -44,6 +46,7 @@ trait RegexFormatTrait
         $getData = trim($request->message , '#');
         $getData = explode('#' , $getData);
        Log::debug($getData);
+
         if(isset($getData[0]) && isset($getData[1]) && isset($getData[2])){
             $validator = Validator::make([
                 'nik' => $getData[0],
@@ -74,4 +77,16 @@ trait RegexFormatTrait
         
     }
     
+
+    /**
+     * Set cache for list history transaction
+     */
+    public function cacheHistoryTransaction(array $data, User $user)
+    {
+        Cache::remember('history-general-transaction-' . $user->email , 60*60*24 , function(){
+            return null;
+        });
+
+        Cache::put('history-general-transaction-' . $user->email, $data , 60*60*24);
+    }
 }

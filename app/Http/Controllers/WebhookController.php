@@ -15,6 +15,7 @@ use App\Traits\ListMessageTrait;
 use App\Traits\RegexFormatTrait;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -56,10 +57,14 @@ class WebhookController extends Controller
     
     }elseif($findUser && count($findUser->koperasies()->wherePivot('koperasi_id', $findKoperasiBot->koperasi->id)->get()) != 0){
 
+        $cacheHistoryTransaction = Cache::get('history-general-transaction-' . $findUser->email);
+
         if($request->message == 1){
             $option = 3;
         }elseif($request->message == 2){
             $option = 4;
+        }elseif(isset($cacheHistoryTransaction[$request->message])){
+            $option = 5;
         }else{
             $option = 2;
         }
@@ -85,7 +90,11 @@ class WebhookController extends Controller
             break;
         case 4:
             $transactions = $this->userServiceInterface->checkHistoryTransaction($findUser);
-            AuthorizationWaApi::seeBotSendMessage($findKoperasiBot->app_key , $receiverPhone , count($transactions) != 0 ? 'Anda memiliki transaksi tapi sedang kami dalam pengembangan' : 'Saat ini anda belum memiliki transaksi apapun');
+
+            AuthorizationWaApi::seeBotSendMessage($findKoperasiBot->app_key , $receiverPhone , count($transactions) != 0 ? $this->setMessageHistoryTransaction($cacheHistoryTransaction) : 'Saat ini anda belum memiliki transaksi apapun');
+            break;
+        case 5:
+            AuthorizationWaApi::seeBotSendMessage($findKoperasiBot->app_key , $receiverPhone , $this->setDetailMessageTransaction($cacheHistoryTransaction[$request->message]));
             break;
        }
     }
