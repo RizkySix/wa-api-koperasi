@@ -11,6 +11,7 @@ use App\Traits\ListMessageTrait;
 use App\Traits\RegexFormatTrait;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class RegisterUser
@@ -34,7 +35,6 @@ class RegisterUser
     public function handle(Request $request, Closure $next): Response
     {
 
-
         $receiverPhone = HelperMethod::phoneUserFormat($request->remote_id);
         $payload = $this->getValue($request);
 
@@ -46,7 +46,7 @@ class RegisterUser
         $request->attributes->add(['payload' => $payload]);
 
         if(isset($payload['status'])){
-            AuthorizationWaApi::seeBotSendMessage($findKoperasiBot->app_key , $receiverPhone, 'Data yang anda kirim tidak valid');
+            AuthorizationWaApi::seeBotSendMessage($findKoperasiBot->app_key , $receiverPhone, 'Data yang anda kirim tidak valid atau sudah digunakan');
 
             return response('invalid content or data' , 422);
         }

@@ -60,5 +60,16 @@ trait ListMessageTrait
                     . "Koperasi Hub";
         return $message;
     }
+
+
+    public function listOption()
+    {
+         $option = "Pilih Opsi\n\n"
+                    . "1. Cek Saldo\n"
+                    . "2. Cek Mutasi\n"
+                    . "3. Liat History\n";
+
+        return $option;
+    }
 }
 

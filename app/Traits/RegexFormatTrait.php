@@ -49,11 +49,12 @@ trait RegexFormatTrait
                 'nik' => $getData[0],
                 'email' => $getData[1]
             ], [
-                'nik' => 'digits:16',
-                'email' => 'email:dns'
+                'nik' => 'digits:16|unique:users',
+                'email' => 'email:dns|unique:users'
             ]);
     
             if($validator->fails()){
+                Log::debug($validator->messages());
                 return [
                     'status' => false,
                     'bot_phone' => $request->bot_phone

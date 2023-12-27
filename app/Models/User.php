@@ -44,4 +44,13 @@ class User extends Authenticatable
                 ->withPivot('verified_at');
     }
 
+
+    /**
+     * Relasi hasone user
+     */
+    public function generalWallet()
+    {
+        return $this->hasOne(GeneralWallet::class);
+    }
+
 }

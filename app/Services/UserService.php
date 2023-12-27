@@ -3,10 +3,12 @@
 namespace App\Services;
 
 use App\Contract\Repositories\UserRepositoryInterface;
+use App\Contract\Services\GeneralWalletServiceInterface;
 use App\Contract\Services\KoperasiServiceInterface;
 use App\Contract\Services\UserServiceInterface;
 use App\Contract\Services\WhatsappBotServiceInterface;
 use App\Helper\AuthorizationWaApi;
+use App\Ipaymu\IpaymuRegister;
 use App\Mail\VerifyEmailUserMail;
 use App\Models\Koperasi;
 use App\Models\User;
@@ -25,12 +27,14 @@ class UserService implements UserServiceInterface
     protected $repository;
     protected $koperasiServiceInterface;
     protected $whatsappBotServiceInterface;
+    protected $generalWalletServiceInterface;
 
-    public function __construct(UserRepositoryInterface $userRepositoryInterface, KoperasiServiceInterface $koperasiServiceInterface, WhatsappBotServiceInterface $whatsappBotServiceInterface)
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, KoperasiServiceInterface $koperasiServiceInterface, WhatsappBotServiceInterface $whatsappBotServiceInterface, GeneralWalletServiceInterface $generalWalletServiceInterface)
     {
         $this->repository = $userRepositoryInterface;
         $this->koperasiServiceInterface = $koperasiServiceInterface;
         $this->whatsappBotServiceInterface = $whatsappBotServiceInterface;
+        $this->generalWalletServiceInterface = $generalWalletServiceInterface;
     }
 
      /**
@@ -41,11 +45,12 @@ class UserService implements UserServiceInterface
        try {
       
         $data['phone'] = explode('@' , $data['phone'])[0];
-        $data['password'] = Hash::make($data['nik'] . rand(100,999));
+        $data['password'] = $data['nik'] . rand(100,999);
+        $data['hashed_password'] = Hash::make($data['password']);
 
         $user = $this->repository->userRegister([
             'nik' => $data['nik'],
-            'password' => $data['password'],
+            'password' => $data['hashed_password'],
             'phone' => $data['phone'],
             'name' => $data['name'],
             'email' => $data['email'],
@@ -68,11 +73,18 @@ class UserService implements UserServiceInterface
            'phone' => $data['phone'],
            'koperasi_name' => $getKoperasi->koperasi->name,
            'email' => $data['email'],
-           'name' => $data['name']
+           'name' => $data['name'],
         ];
 
        $this->setVerifyEmailPayload($emailPayload);
-        //end mail action 
+        
+        //set ipaymu single sign on payload cache
+        $this->setPayloadIpaymu([
+            'phone' => $data['phone'],
+            'email' => $data['email'],
+            'name' => $data['name'],
+            'password' => $data['password'],
+        ]);
 
         return $user;
 
@@ -110,14 +122,23 @@ class UserService implements UserServiceInterface
                 $this->repository->verifyEmail($email);
 
                 $getKoperasi = $this->koperasiServiceInterface->findKoperasiByBame($getCache['koperasi']);
-                Log::debug($getKoperasi);
-
-                AuthorizationWaApi::seeBotSendMessage($getKoperasi->bot->app_key , $getCache['receiverPhone'], 'Email kamu berhasil terverifiaksi');
-
+              
+                AuthorizationWaApi::seeBotSendMessage($getKoperasi->bot->app_key , $getCache['receiverPhone'], 'Email kamu berhasil terverifikasi');
+                
                 Cache::forget('verify-email' . $email);
+
+                // action single sign on ipaymu
+                $user = $this->findUserByPhone($getCache['receiverPhone']);
+
+                $singleSignOnPayload = Cache::get('single-sign-on-' . $email);
+                $singleSignOn = $this->generalWalletServiceInterface->storeIpaymuData($user , $singleSignOnPayload);
+
+                if($singleSignOn){
+                    AuthorizationWaApi::seeBotSendMessage($getKoperasi->bot->app_key , $singleSignOnPayload['phone'], $this->listOption());
+                }
+
                 return true;
 
-               
             }
 
             return false;

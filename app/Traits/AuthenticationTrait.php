@@ -12,6 +12,9 @@ use SebastianBergmann\Type\NullType;
 
 trait AuthenticationTrait
 {
+    /**
+     * Cache and send email payload
+     */
     public function setVerifyEmailPayload(array $data)
     {
         //mail action below start
@@ -26,7 +29,8 @@ trait AuthenticationTrait
         Cache::put('verify-email' . $data['email'] , [
             'token' => $token,
             'receiverPhone' => $data['phone'],
-            'koperasi' => $data['koperasi_name']
+            'koperasi' => $data['koperasi_name'],
+            'name' => $data['name'],
         ], now()->addHour(1));
 
         $emailPayload = [
@@ -36,6 +40,20 @@ trait AuthenticationTrait
         ];
 
         Mail::to($data['email'])->send(new VerifyEmailUserMail($emailPayload));
+    }
+
+
+    /**
+     * Cache and data for single sign on ipaymu
+     */
+    public function setPayloadIpaymu(array $data)
+    {
+        Cache::remember('single-sign-on-' . $data['email'] , 60*60*24 , function(){
+            return null;
+        });
+
+        Cache::put('single-sign-on-' . $data['email'] , $data, 60*60*24);
+
     }
 
 

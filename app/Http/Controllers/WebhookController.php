@@ -40,6 +40,7 @@ class WebhookController extends Controller
      */
     public function koperasiWebhook(Request $request)
     {
+      
         $receiverPhone = HelperMethod::phoneUserFormat($request->remote_id);
         $option = 0;
 
@@ -68,10 +69,7 @@ class WebhookController extends Controller
             return $result instanceof User ? AuthorizationWaApi::seeBotSendMessage($findKoperasiBot->app_key , $receiverPhone, 'Kami sudah mengirimkan email verifikasi, ketik "resend" untuk mengirim ulang.') : null;
             break;
         case 2:
-            $option = "Pilih Opsi\n\n"
-                    . "1. Cek Saldo\n"
-                    . "2. Cek Mutasi\n"
-                    . "3. Liat History\n";
+            $option = $this->listOption();
             AuthorizationWaApi::seeBotSendMessage($findKoperasiBot->app_key, $receiverPhone , $option);
             break;
           

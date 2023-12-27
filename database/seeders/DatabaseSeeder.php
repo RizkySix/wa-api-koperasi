@@ -17,14 +17,27 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
          $myKoperasi = Koperasi::factory()->create([
+            'name' => 'Moka Koperasi',
+            'phone' => '6287762582176'
+         ]);
+
+         $myKoperasi->bot()->create([
+            'wa_phone' => '6287762582176',
+            'app_key' => 'd554c3fb-43af-41c2-8a8a-5a46490470e7'
+         ]);
+
+         $myKoperasi2 = Koperasi::factory()->create([
             'name' => 'Parau Koperasi',
             'phone' => '6285792718157'
          ]);
 
-         $myKoperasi->bot()->create([
+         $myKoperasi2->bot()->create([
             'wa_phone' => '6285792718157',
-            'app_key' => 'acaceea1-7480-4620-8284-d5cfb120d6df'
+            'app_key' => '10ea7e0c-9e57-41ca-ab88-f0c7c6b22967'
          ]);
+
+
+        
 
           $koperasies = Koperasi::factory(5)->create()
             ->each(function($koperasi) {
