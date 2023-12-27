@@ -7,4 +7,6 @@ use App\Models\User;
 interface GeneralWalletRepositoryInterface
 {
     public function storeIpaymuData(User $user, array $data);
+
+    public function findWalletByNik(string $nik);
 }

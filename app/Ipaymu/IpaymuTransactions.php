@@ -3,22 +3,21 @@
 namespace App\Ipaymu;
 
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
-class IpaymuRegister
+class IpaymuTransactions
 {
-    public static string $url = '/register';
+    public static string $url = '/history';
 
     /**
-     * Single sign on payload
+     * Ipaymu get transaction list
      */
-    public static function singleSignOn(array $data)
+    public static function checkHistoryTransaction(array $data)
     {
         $payload = [
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'phone' => $data['phone'],
-            'password' => $data['password']
+            'account' => $data['ipaymu_va'],
+            'orderBy' => 'id',
+            'order' => 'DESC',
+            'limit' => 5
         ];
 
         $headers = IpaymuSignature::generateSignature($payload, 'POST');
@@ -28,6 +27,5 @@ class IpaymuRegister
         $response = Http::withHeaders($headers)->post($endpoint , $payload);
         
         return $response->json();
-
     }
 }

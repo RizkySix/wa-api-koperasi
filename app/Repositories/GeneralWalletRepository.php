@@ -9,7 +9,7 @@ use App\Models\User;
 class GeneralWalletRepository implements GeneralWalletRepositoryInterface
 {
     protected $model = GeneralWallet::class;
-    
+
     /**
      * Store ipaymu data
      */
@@ -23,5 +23,13 @@ class GeneralWalletRepository implements GeneralWalletRepositoryInterface
         ]);
 
         return $ipaymuData;
+    }
+
+    /**
+     * Find wallet by nik user
+     */
+    public function findWalletByNik(string $nik)
+    {
+        
     }
 }

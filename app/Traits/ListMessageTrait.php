@@ -64,10 +64,10 @@ trait ListMessageTrait
 
     public function listOption()
     {
-         $option = "Pilih Opsi\n\n"
+         $option = "Pilih Opsi Berikut:\n\n"
                     . "1. Cek Saldo\n"
-                    . "2. Cek Mutasi\n"
-                    . "3. Liat History\n";
+                    . "2. Cek Mutasi/History Transaksi\n"
+                 ;
 
         return $option;
     }

@@ -8,7 +8,9 @@ use App\Contract\Services\KoperasiServiceInterface;
 use App\Contract\Services\UserServiceInterface;
 use App\Contract\Services\WhatsappBotServiceInterface;
 use App\Helper\AuthorizationWaApi;
+use App\Ipaymu\IpaymuBalance;
 use App\Ipaymu\IpaymuRegister;
+use App\Ipaymu\IpaymuTransactions;
 use App\Mail\VerifyEmailUserMail;
 use App\Models\Koperasi;
 use App\Models\User;
@@ -158,6 +160,45 @@ class UserService implements UserServiceInterface
             return $this->repository->findUserByPhone($phone);
         } catch (Exception $e) {
             return $e->getMessage();
+        }
+    }
+
+
+    /**
+     * Check saldo/balance
+     */
+    public function checkBalance(User $user)
+    {
+        try {
+            
+            $ipaymuBalance = IpaymuBalance::checkBalance([
+                'ipaymu_va' => $user->generalWallet->ipaymu_va
+            ]);
+
+            Log::debug($ipaymuBalance);
+            return $ipaymuBalance['Data']['MerchantBalance'];
+
+        } catch (Exception $e) {
+            Log::debug($e->getMessage());
+        }
+    }
+
+
+    /**
+     * Check history transaction
+     */
+    public function checkHistoryTransaction(User $user)
+    {
+        try {
+            
+            $ipaymuTransactions = IpaymuTransactions::checkHistoryTransaction([
+                'ipaymu_va' => $user->generalWallet->ipaymu_va
+            ]);
+
+            Log::debug($ipaymuTransactions);
+            return $ipaymuTransactions['Data']['Transaction'];
+        } catch (Exception $e) {
+            Log::debug($e->getMessage());
         }
     }
 }

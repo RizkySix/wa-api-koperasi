@@ -35,7 +35,7 @@ class RegisteredUserKoperasi
         $koperasiBot = $request->get('koperasi_bot');
         $payload = $request->get('payload');
 
-        if($user && count($user->koperasies()->wherePivot('koperasi_id', 2)->get()) == 0){
+        if($user && count($user->koperasies()->wherePivot('koperasi_id', $koperasiBot->koperasi->id)->get()) == 0){
             $decisionRegis = HelperMethod::makeAllStringLowerCase($request->message);
         
             if (!in_array($decisionRegis, ['lanjut', 'tidak']) && ($payload['nik'] != null || $payload['name'] != null || $payload['email'] != null)) {

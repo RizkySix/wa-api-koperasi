@@ -26,12 +26,7 @@ class GeneralWalletService implements GeneralWalletServiceInterface
         try {
             
             //register single sign on ipaymu
-           $singleSignOn = IpaymuRegister::singleSignOn([
-                'name' => $cacheData['name'],
-                'email' => $cacheData['email'],
-                'phone' => $cacheData['phone'],
-                'password' => $cacheData['password']
-            ]);
+           $singleSignOn = IpaymuRegister::singleSignOn($cacheData);
             Log::debug($singleSignOn);
 
             if($singleSignOn['Status'] == 200){
@@ -48,5 +43,14 @@ class GeneralWalletService implements GeneralWalletServiceInterface
             Log::debug($e->getMessage());
             return $e->getMessage();
         }
+    }
+
+
+    /**
+     * Find wallet by nik user
+     */
+    public function findWalletByNik(string $nik)
+    {
+        
     }
 }

@@ -55,7 +55,14 @@ class WebhookController extends Controller
 
     
     }elseif($findUser && count($findUser->koperasies()->wherePivot('koperasi_id', $findKoperasiBot->koperasi->id)->get()) != 0){
-        $option = 2;
+
+        if($request->message == 1){
+            $option = 3;
+        }elseif($request->message == 2){
+            $option = 4;
+        }else{
+            $option = 2;
+        }
        
     }
 
@@ -72,7 +79,14 @@ class WebhookController extends Controller
             $option = $this->listOption();
             AuthorizationWaApi::seeBotSendMessage($findKoperasiBot->app_key, $receiverPhone , $option);
             break;
-          
+        case 3:
+            $balance = $this->userServiceInterface->checkBalance($findUser);
+            AuthorizationWaApi::seeBotSendMessage($findKoperasiBot->app_key , $receiverPhone , 'Saldo anda saat ini adalah Rp ' . $balance);
+            break;
+        case 4:
+            $transactions = $this->userServiceInterface->checkHistoryTransaction($findUser);
+            AuthorizationWaApi::seeBotSendMessage($findKoperasiBot->app_key , $receiverPhone , count($transactions) != 0 ? 'Anda memiliki transaksi tapi sedang kami dalam pengembangan' : 'Saat ini anda belum memiliki transaksi apapun');
+            break;
        }
     }
 
