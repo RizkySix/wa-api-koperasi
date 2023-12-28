@@ -15,8 +15,10 @@ class IpaymuTransactions
     {
         $payload = [
             'account' => $data['ipaymu_va'],
-            'orderBy' => 'id',
+            'orderBy' => 'created_at',
             'order' => 'DESC',
+            'status' => 1,
+            //'type' => 0,
             'limit' => 5
         ];
 

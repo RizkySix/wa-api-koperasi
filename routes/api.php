@@ -41,6 +41,7 @@ Route::prefix('koperasi')->group(function() {
 
     Route::get('/test' , function(){
         //User::where('email_verified_at' , null)->whereDay('created_at' , '<' , now()->addDays(1)->format('d'))->delete();
+        echo number_format(10000, 0 , '.' , '.');
         echo  now()->addDays(1)->format('d');
     });
 

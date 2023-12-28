@@ -58,12 +58,11 @@ class WebhookController extends Controller
     }elseif($findUser && count($findUser->koperasies()->wherePivot('koperasi_id', $findKoperasiBot->koperasi->id)->get()) != 0){
 
         $cacheHistoryTransaction = Cache::get('history-general-transaction-' . $findUser->email);
-
         if($request->message == 1){
             $option = 3;
         }elseif($request->message == 2){
             $option = 4;
-        }elseif(isset($cacheHistoryTransaction[$request->message])){
+        }elseif(isset($cacheHistoryTransaction[HelperMethod::makeAllStringLowerCase($request->message)])){
             $option = 5;
         }else{
             $option = 2;
@@ -86,15 +85,18 @@ class WebhookController extends Controller
             break;
         case 3:
             $balance = $this->userServiceInterface->checkBalance($findUser);
-            AuthorizationWaApi::seeBotSendMessage($findKoperasiBot->app_key , $receiverPhone , 'Saldo anda saat ini adalah Rp ' . $balance);
+            AuthorizationWaApi::seeBotSendMessage($findKoperasiBot->app_key , $receiverPhone , 'Saldo anda saat ini adalah Rp ' . number_format($balance , 0 , '.' , '.'));
             break;
         case 4:
             $transactions = $this->userServiceInterface->checkHistoryTransaction($findUser);
+            $cacheHistoryTransaction = Cache::get('history-general-transaction-' . $findUser->email);
 
             AuthorizationWaApi::seeBotSendMessage($findKoperasiBot->app_key , $receiverPhone , count($transactions) != 0 ? $this->setMessageHistoryTransaction($cacheHistoryTransaction) : 'Saat ini anda belum memiliki transaksi apapun');
             break;
         case 5:
-            AuthorizationWaApi::seeBotSendMessage($findKoperasiBot->app_key , $receiverPhone , $this->setDetailMessageTransaction($cacheHistoryTransaction[$request->message]));
+            $cacheHistoryTransaction = Cache::get('history-general-transaction-' . $findUser->email);
+
+            AuthorizationWaApi::seeBotSendMessage($findKoperasiBot->app_key , $receiverPhone , $this->setDetailMessageTransaction($cacheHistoryTransaction[HelperMethod::makeAllStringLowerCase($request->message)]));
             break;
        }
     }

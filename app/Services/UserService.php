@@ -138,10 +138,12 @@ class UserService implements UserServiceInterface
 
                 if($singleSignOn){
                     AuthorizationWaApi::seeBotSendMessage($getKoperasi->bot->app_key , $singleSignOnPayload['phone'], $this->listOption());
+                }else{
+                    AuthorizationWaApi::seeBotSendMessage($getKoperasi->bot->app_key , $getCache['receiverPhone'], "Terdapat kesalahan, hubungi developer");
+                   
                 }
 
-                return true;
-
+                return true;   
             }
 
             return false;
@@ -196,7 +198,6 @@ class UserService implements UserServiceInterface
                 'ipaymu_va' => $user->generalWallet->ipaymu_va
             ]);
 
-            Log::debug($ipaymuTransactions);
             $transactions =  $ipaymuTransactions['Data']['Transaction'];
 
             $data = [];

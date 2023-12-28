@@ -45,12 +45,20 @@ trait RegexFormatTrait
 
         $getData = trim($request->message , '#');
         $getData = explode('#' , $getData);
-       Log::debug($getData);
+        $nik = null;
+        $email = null;
+        $name = null;
 
+       Log::debug($getData);
+            
         if(isset($getData[0]) && isset($getData[1]) && isset($getData[2])){
+            $nik = trim($getData[0]);
+            $email = trim($getData[1]);
+            $name = trim($getData[2]);
+
             $validator = Validator::make([
-                'nik' => $getData[0],
-                'email' => $getData[1]
+                'nik' => $nik,
+                'email' => $email
             ], [
                 'nik' => 'digits:16|unique:users',
                 'email' => 'email:dns|unique:users'
@@ -67,9 +75,9 @@ trait RegexFormatTrait
 
         $data = [
             'phone' => $request->remote_id,
-            'nik' => $getData[0] ?? null,
-            'email' => $getData[1] ?? null,
-            'name' => $getData[2] ?? null,
+            'nik' => $nik ?? null,
+            'email' => $email ?? null,
+            'name' => $name ?? null,
             'bot_phone' => $request->bot_phone
         ];
 
@@ -83,8 +91,8 @@ trait RegexFormatTrait
      */
     public function cacheHistoryTransaction(array $data, User $user)
     {
-        Cache::remember('history-general-transaction-' . $user->email , 60*60 , function(){
-            return null;
+        Cache::remember('history-general-transaction-' . $user->email , 60*60 , function() use($data){
+            return $data;
         });
 
         Cache::put('history-general-transaction-' . $user->email, $data , 60*60);

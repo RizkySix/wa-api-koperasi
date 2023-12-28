@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 trait ListMessageTrait
 {
@@ -89,6 +90,7 @@ trait ListMessageTrait
 
     public function setDetailMessageTransaction(array $data)
     {
+        Log::debug($data);
         $message = "Berikut adalah detail transaksi anda:\n\n"
                    . "-Transaksi sebesar Rp " . $data['Amount'] + $data['Fee'] . ", channel pembayaran " . $data['PaymentChannel'] . "\n"
                    . "Dibuat pada tanggal " . Carbon::parse($data['CreatedDate'])->format('d-M-Y H:i:s');
