@@ -9,4 +9,6 @@ interface UserRepositoryInterface
     public function verifyEmail(string $email);
 
     public function findUserByPhone(string $phone);
+
+    public function deleteUnverifiedMail();
 }

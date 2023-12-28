@@ -17,4 +17,6 @@ interface UserServiceInterface
     public function checkBalance(User $user);
 
     public function checkHistoryTransaction(User $user);
+
+    public function deleteUnverifiedMail();
 }

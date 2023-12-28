@@ -39,31 +39,9 @@ Route::post('/webhook', [WebhookController::class , 'webhook'])->name('webhook')
 Route::prefix('koperasi')->group(function() {
     Route::post('/webhook', [WebhookController::class , 'koperasiWebhook'])->middleware(['check.regis' , 'check.email' , 'registered.user.koperasi'])->name('webhook.koperasi');
 
-    Route::post('/test' , function(UserRegisterRequest $request){
-        $validatedData = $request->validated();
-
-        $validatedData['password'] = Hash::make($validatedData['nik'] . rand(123,999));
-
-        $user = User::create($validatedData);
-
-        //buat token dan endpoint
-        $token = Str::uuid();
-
-        // cache here
-        Cache::remember('verify-email' . $validatedData['email'] , now()->addHour(1) , function() {
-            return null;
-        });
-
-        Cache::put('verify-email' . $validatedData['email'] , $token, now()->addHour(1));
-
-        $data = [
-            'url' => 'http://api-koperasi.test/api/v1/auth/email/verify?email=' . str_replace( '@' ,'%40' , $validatedData['email']) . '&token=' . $token,
-            'name' => $validatedData['name']
-        ];
-
-        Mail::to($validatedData['email'])->send(new VerifyEmailUserMail($data));
-
-        return $user;
+    Route::get('/test' , function(){
+        //User::where('email_verified_at' , null)->whereDay('created_at' , '<' , now()->addDays(1)->format('d'))->delete();
+        echo  now()->addDays(1)->format('d');
     });
 
 

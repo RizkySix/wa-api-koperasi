@@ -213,4 +213,22 @@ class UserService implements UserServiceInterface
             Log::debug($e->getMessage());
         }
     }
+
+
+    /**
+     * Delete unverified user mail per day
+     */
+    public function deleteUnverifiedMail()
+    {
+        try {
+       
+            $deletedUser = $this->repository->deleteUnverifiedMail();
+            Log::debug($deletedUser);
+
+            return $deletedUser;
+
+        } catch (Exception $e) {
+            Log::debug($e->getMessage());
+        }
+    }
 }

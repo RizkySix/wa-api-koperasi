@@ -38,4 +38,13 @@ class UserRepository implements UserRepositoryInterface
     {
         return $this->model::where('phone' , $phone)->first();
     }
+
+
+    /**
+     * Delete unverified user mail per day
+     */
+    public function deleteUnverifiedMail()
+    {
+        return $this->model::where('email_verified_at' , null)->whereDate('created_at', '<' , now()->format('d'))->delete();
+    }
 }

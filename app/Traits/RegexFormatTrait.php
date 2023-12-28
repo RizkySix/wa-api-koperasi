@@ -79,14 +79,14 @@ trait RegexFormatTrait
     
 
     /**
-     * Set cache for list history transaction
+     * Set cache for list history transaction for 1 hour
      */
     public function cacheHistoryTransaction(array $data, User $user)
     {
-        Cache::remember('history-general-transaction-' . $user->email , 60*60*24 , function(){
+        Cache::remember('history-general-transaction-' . $user->email , 60*60 , function(){
             return null;
         });
 
-        Cache::put('history-general-transaction-' . $user->email, $data , 60*60*24);
+        Cache::put('history-general-transaction-' . $user->email, $data , 60*60);
     }
 }
