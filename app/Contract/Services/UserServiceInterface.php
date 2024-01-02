@@ -10,8 +10,6 @@ interface UserServiceInterface
 
     public function verifyEmail(string $email , string $token);
 
-    public function resendEmailVerify(string $phone);
-
     public function findUserByPhone(string $phone);
 
     public function checkBalance(User $user);

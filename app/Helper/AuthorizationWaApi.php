@@ -28,7 +28,7 @@ class AuthorizationWaApi
                 'message' => $message,
                 'sandbox' => 'false'
             ]);
-          
+        
             return $response;
         } catch (Exception $e) {
             Log::debug($e->getMessage());

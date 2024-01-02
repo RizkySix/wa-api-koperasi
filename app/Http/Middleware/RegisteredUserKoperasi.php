@@ -37,8 +37,8 @@ class RegisteredUserKoperasi
 
         if($user && count($user->koperasies()->wherePivot('koperasi_id', $koperasiBot->koperasi->id)->get()) == 0){
             $decisionRegis = HelperMethod::makeAllStringLowerCase($request->message);
-        
-            if (!in_array($decisionRegis, ['lanjut', 'tidak']) && ($payload['nik'] != null || $payload['name'] != null || $payload['email'] != null)) {
+           
+            if (!in_array($decisionRegis, ['lanjut', 'tidak']) && ($payload['nik'] == null || $payload['name'] == null || $payload['email'] == null)) {
                 
                 AuthorizationWaApi::seeBotSendMessage($koperasiBot->app_key , $user->phone , "Datamu sudah tersimpan di sistem kami. Balas 'Lanjut' jika ingin lanjut registrasi, balas 'Tidak' jika tidak.");
                 return response('new register' , 403);

@@ -100,19 +100,6 @@ class UserService implements UserServiceInterface
 
 
     /**
-     * Resend verify email
-     */
-    public function resendEmailVerify(string $phone)
-    {
-        try {
-            $getUser = $this->repository->findUserByPhone($phone);
-        } catch (Exception $e) {
-            return $e->getMessage();
-        }
-    }
-
-
-    /**
      * Verify email service
      */
     public function verifyEmail(string $email, string $token)

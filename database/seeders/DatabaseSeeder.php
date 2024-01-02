@@ -16,15 +16,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-         /* $myKoperasi = Koperasi::factory()->create([
+         $myKoperasi = Koperasi::factory()->create([
             'name' => 'Moka Koperasi',
-            'phone' => '6287762582176'
+            'phone' => '6287861189600'
          ]);
 
          $myKoperasi->bot()->create([
-            'wa_phone' => '6287762582176',
-            'app_key' => 'd554c3fb-43af-41c2-8a8a-5a46490470e7'
-         ]); */
+            'wa_phone' => '6287861189600',
+            'app_key' => 'cba02c6f-3dc5-47be-a6f6-ad8e27595f2f'
+         ]);
 
          $myKoperasi2 = Koperasi::factory()->create([
             'name' => 'Parau Koperasi',
@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
 
          $myKoperasi2->bot()->create([
             'wa_phone' => '6285792718157',
-            'app_key' => '1f2547c1-4b06-4eb3-8025-8db758871331'
+            'app_key' => 'a821c4aa-afd0-4f72-8809-ef66d0498128'
          ]);
 
 

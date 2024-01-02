@@ -37,7 +37,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 Route::post('/webhook', [WebhookController::class , 'webhook'])->name('webhook');
 
 Route::prefix('koperasi')->group(function() {
-    Route::post('/webhook', [WebhookController::class , 'koperasiWebhook'])->middleware(['check.regis' , 'check.email' , 'registered.user.koperasi'])->name('webhook.koperasi');
+    Route::post('/webhook', [WebhookController::class , 'koperasiWebhook'])->middleware(['check.regis' , 'registered.user.koperasi' , 'check.email'])->name('webhook.koperasi');
 
     Route::get('/test' , function(){
         //User::where('email_verified_at' , null)->whereDay('created_at' , '<' , now()->addDays(1)->format('d'))->delete();
