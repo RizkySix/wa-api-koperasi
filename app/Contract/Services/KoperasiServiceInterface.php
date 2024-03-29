@@ -12,7 +12,7 @@ interface KoperasiServiceInterface
 
     public function sendMessage(string $msg);
 
-    // -------------------------------------------------------------
+    // -------------------------------------------------------------yang diatas tidak dipakai karena itu milik 1msgio
     public function attachUserWithKoperasi(string $botPhone, User $user);
 
     public function findKoperasiByBame(string $name);
